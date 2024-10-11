@@ -1,3 +1,4 @@
+from time import *
 class Menu():
     
     def __init__(self,pop,power,action,monster,hero,relic,realm,max_turn,turn_done):
@@ -102,6 +103,7 @@ class Menu():
             
             if 25 == card:
                 Card25()
+            sleep(0.5)
     
     def CardChoice(self,real_cards):
         Validity = False
@@ -686,6 +688,10 @@ def Lethality(Pop,Lethal,Damage,Normaldmg):
     else:
         Pop -= Normaldmg
     return Pop
+
+def ActionSurge(PlayerAction,SurgeAmnt):
+    PlayerAction += SurgeAmnt
+    return PlayerAction
 
 def ActionSabotage(PlayerAction,ActAmnt):
     PlayerAction -= ActAmnt

@@ -1,9 +1,10 @@
 from random import *
 from Sprite import *
+from time import *
 #---------------------- ^^ Importing random and sprites from seperate program, aswell as functions and classes.
 
 Real_Cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-P1_Hand = []
+P1_Hand = [12]
 P1_Hold = []
 P2_Hand = []
 P2_Hold = []
@@ -24,6 +25,8 @@ P1Lethality = False
 P1Seducetime = 0
 P1Extradmg = 0
 P1ActionDull = False
+P1ActionSurge = False
+P1SurgeTime = 0
 #------------------------ ^^The values for P1
 P2Pop = 0
 P2Power = 3
@@ -40,6 +43,8 @@ P2Lethality = False
 P2Seducetime = 0
 P2Extradmg = 0
 P2ActionDull = False
+P2ActionSurge = False
+P2SurgeTime = 0
 #----------------------- ^^The values for P2
 TurnsMade = 1
 #-----------------------^^ Universal values
@@ -70,13 +75,20 @@ while Gamecondition == False:
 #--------------------------------- ^^ Establishes the amount of turns and sets loop conditions.
 while GameRun == True:
     if P1Turn == True:
+#---------------------------------
         P1Action = 6
+        if P1ActionSurge == True:
+            P1Action = ActionSurge(P1Action,2)
+            P1SurgeTime =- 1
+            if P1SurgeTime == 0:
+                print("You no longer are action surged.")
         if P1ActionDull == True:
             P1Action = ActionSabotage(P1Action,2)
             P1DullTime =- 1
             if P1DullTime == 0:
                 P1ActionDull = False
-                print("Your action points are no longer hindered")
+                print("Your action points are no longer hindered.")
+#---------------------------------
         if P1PonderStatus == True:
             P1CardGain = P1CardGain
             P1PonderStatus = False
@@ -303,6 +315,60 @@ while GameRun == True:
                         P1DullTime = 2
                         P1ActionDull = True
                         print("Turns out the gods didn't belivee you, and now you have 2 less action points for two turns")
+                    
+            if P1Card == 12:
+                if P1Menu.CardCheck(P1Card,P1_Hand,P1Action,P1Power,P1Pop,P1Relic,3):
+                    P1Action -= 3
+                    print("You stir chaos:")
+                    event = randint(1,6)
+                    event2 = randint(1,6)
+                    if event == 1:
+                        P1Pop += 200
+                        print("You gain 200 followers ",end="")
+                    if event == 2:
+                        P1Pop -= 200
+                        print("You lose 200 followers ",end="")
+                    if event == 3:
+                        P1Relic += 2
+                        print("You gain 2 relics ",end="")
+                    if event == 4:
+                        P1Relic -= 2
+                        print("You lose 2 relics ",end="")
+                    if event == 5:
+                        P1Hero += 1
+                        P1Monster += 1
+                        print("You gain a monster and a hero ",end="")
+                    if event == 6:
+                        P1Hero -= 1
+                        P1Hero -= 1
+                        print("You lose a hero and a monster ",end="")
+                        
+                    if event2 == 1:
+                        P1Power += 2
+                        print("and you gain 2 power points.")
+                    if event2 == 2:
+                        P1Power -= 2
+                        print("but also lose 2 power.")
+                    if event2 == 3:
+                        print("and also you feel fatigue (-2 action points for 2 turns)")
+                        P1DullTime = 2
+                        P1ActionDull = True
+                    if event2 == 4:
+                        P1ActionSurge = True
+                        P1SurgeTime = 2
+                        print("and you feel a sudden surge of energy! (+2 action points for 2 turns)")
+                    if event2 == 5:
+                        P1Action += 3
+                        print("and you gain the action points back!")
+                    if event2 == 6:
+                        print("and you lose 3 further action points.")
+                        if P1Action - 3 < 0:
+                            P1Action = 0
+                        else:
+                            P1Action -= 3
+                            
+                    
+                        
                         
         if P1Choice == '2':
             P1Menu.SpecMenu()

@@ -10,7 +10,7 @@ P2_Hand = []
 P2_Hold = []
 #---------------------- ^^ The lists for cards and such aswell as the imports.
 
-P1Pop = 0
+P1Pop = 4000
 P1Power = 3
 P1Monster = 1
 P1Hero = 2
@@ -28,7 +28,7 @@ P1ActionDull = False
 P1ActionSurge = False
 P1SurgeTime = 0
 #------------------------ ^^The values for P1
-P2Pop = 0
+P2Pop = 4000
 P2Power = 3
 P2Monster = 3  
 P2Hero = 1
@@ -104,13 +104,17 @@ while GameRun == True:
 #--------------------------------- ^^ The conditions that are set at the start of every full turn.
     for i in range(P1CardGain):
         CardChosen = randint(1,25)
-        if CardChosen in P1_Hand:
-            while CardChosen in P1_Hand:
+        if CardChosen in P1_Hand or CardChosen in P1_Hold:
+            while CardChosen in P1_Hand or CardChosen in P1_Hold:
                 CardChosen = randint(1,25)
         P1_Hand.append(CardChosen)
         P1_Hand.sort()  
-        print(P1_Hand)
         
+    if len(P1_Hold) > 0:
+        Held = P1_Hold[0]
+        P1_Hand.append(Held)
+        P1_Hold = []
+        print("No longer holding any card")
 #---------------------------------- ^^ Getting new unique cards.
     while P1Turn == True:
         P1Menu = Menu(P1Pop,P1Power,P1Action,P1Monster,P1Hero,P1Relic,P1Realm,MaxTurn,TurnsMade)
@@ -314,7 +318,7 @@ while GameRun == True:
                     if event == 3:
                         P1DullTime = 2
                         P1ActionDull = True
-                        print("Turns out the gods didn't belivee you, and now you have 2 less action points for two turns")
+                        print("Turns out the gods didn't belive you, and now you have 2 less action points for two turns")
                     
             if P1Card == 12:
                 if P1Menu.CardCheck(P1Card,P1_Hand,P1Action,P1Power,P1Pop,P1Relic,3):
@@ -366,9 +370,33 @@ while GameRun == True:
                             P1Action = 0
                         else:
                             P1Action -= 3
-                            
-                    
-                        
+                               
+            if P1Card == 13:
+                if P1Menu.CardCheck(P1Card,P1_Hand,P1Action,P1Power,P1Pop,P1Relic,2):
+                    P1Action -= 2
+                    event = randint(1,5)
+                    print("You kill 200 of the opponent's followers ",end="")
+                    P2Pop = Lethality (P2Pop,P1Lethality,P1Extradmg,200)
+                    if event == 1:
+                        print(".")
+                    if event == 2:
+                        if P2Relic >= 2:
+                            print("and you manage to take two enemy relics too.")
+                            P2Relic -= 2
+                            P1Relic += 2
+                        else:
+                            print("aswell as mishmashing stuff into one relic.")
+                            P1Relic += 1
+                    if event == 3:
+                        print("aswell as capturing 150 more of their followers")
+                        P2Pop -= 150
+                        P1Pop += 150
+                    if event == 4:
+                        print("but lose 50 of your own in the battle.")
+                        P1Pop -= 50
+                    if event == 5:
+                        print("but it takes a little bit more ffort than usual.")
+                        P1Action -= 1
                         
         if P1Choice == '2':
             P1Menu.SpecMenu()
@@ -384,7 +412,12 @@ while GameRun == True:
                     P1Action -= 1
                     P1Pop -= 200
                     P1Power += 1
-                    
+                
+            if P1Choice == '3':
+                P1Choice = 0
+                if P1Menu.Hold(P1Action,P1_Hand,P1_Hold):
+                    print("Holding card",P1_Hold[0])
+                    P1Action -= 1
 
         if P1Choice == "3":
             P1Turn = False

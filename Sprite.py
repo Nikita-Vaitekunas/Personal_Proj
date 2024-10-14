@@ -103,7 +103,7 @@ class Menu():
             
             if 25 == card:
                 Card25()
-            sleep(0.5)
+            sleep(0.2)
     
     def CardChoice(self,real_cards):
         Validity = False
@@ -131,7 +131,7 @@ class Menu():
                 actioncheck = True
                 if power_in >= power_req:
                     powcheck = True
-                    if pop_in >= pop_req:
+                    if pop_in >= pop_req: 
                         popcheck = True
                         if relic_in >= relic_req:  #Note to self: Keep the pattern up if you decide to add more card thresholds.
                             relcheck = True
@@ -139,6 +139,7 @@ class Menu():
                             print("You don't have the required relics.") #Error messages
                     else:
                         print("You don't have the required population.")
+                        
                 else:
                     print("You dont have the required power.")
             else:
@@ -156,7 +157,9 @@ class Menu():
         print("██                                 ██")
         print("██   2. (Sacrifice)                ██")
         print("██                                 ██")
-        print("██   3. (Back)                     ██")
+        print("██   3. (Hold a card)              ██")
+        print("██                                 ██")
+        print("██   4. (Back)                     ██")
         print("██                                 ██")
         print("█████████████████████████████████████")
     
@@ -193,6 +196,39 @@ class Menu():
             print("██                                     ██")
             print("█████████████████████████████████████████")
         return success
+    
+    def Hold(self,action,inhand_card,held_cards):
+        success = False
+        if action >= 2 and len(held_cards) == 0:
+            if inhand_card not in held_cards:
+                Menu.ShowCards(self,inhand_card)
+                intent = int(input("What card do you want to hold? (Enter Id): "))
+                while intent not in inhand_card and intent != 0:
+                    Menu.ShowCards(self,inhand_card)
+                    intent = int(input("Re-enter card you want to hold (Enter Id): "))
+                if intent == 0:
+                    return success 
+                if intent in inhand_card:
+                    held_cards.append(intent)
+                    inhand_card.remove(intent)
+                    success = True
+                    return success
+            else:
+                print("█████████████████████████████████████████")
+                print("██                <P1>                 ██")
+                print("██          Card not in deck           ██")
+                print("██                                     ██")
+                print("█████████████████████████████████████████")
+                return success
+        else:
+            print("█████████████████████████████████████████")
+            print("██                <P1>                 ██")
+            print("██ Can't hold more cards / Not enough  ██")
+            print("██                actions              ██")
+            print("█████████████████████████████████████████")
+            return success
+            
+                
 def Card1():
     print("▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲")
     print("█████████████████████████████████████")
@@ -684,7 +720,7 @@ def Seduce(Pop,Seduce,Gain):
 def Lethality(Pop,Lethal,Damage,Normaldmg):
     if Lethal == True:
         Pop -= (Damage + Normaldmg)
-        print("You dealt",Damage,"extra damge to your opponent")
+        print("You dealt",Damage,"extra damage to your opponent")
     else:
         Pop -= Normaldmg
     return Pop

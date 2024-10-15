@@ -1,4 +1,5 @@
 from time import *
+from random import *
 class Menu():
     
     def __init__(self,pop,power,action,monster,hero,relic,realm,max_turn,turn_done):
@@ -17,7 +18,7 @@ class Menu():
         print("██                                     ██ Popularity/Followers:",self.pop,"")
         print("██      ▪1(Play Cards)                 ██ Power Points:",self.power,"")
         print("██                                     ██ Action Points:",self.action,"     Realms:",self.realm,"")
-        print("██      ▪2(Ponder / Sacrifice)         ██ Monsters:",self.monster,"          Turns left:",(self.max_turn - self.turns),"")
+        print("██      ▪2(Extra options)              ██ Monsters:",self.monster,"          Turns left:",(self.max_turn - self.turns),"")
         print("██                                     ██ Heroes:",self.hero,"")
         print("██      ▪3(End your turn)              ██ Relics:",self.relic,"")
         print("██                                     ██ Turn:",self.turns,"")
@@ -129,19 +130,26 @@ class Menu():
             cardcheck = True
             if action_in >= action_req:
                 actioncheck = True
-                if power_in >= power_req:
+                if power_in < 0 and power_req == 0:
                     powcheck = True
-                    if pop_in >= pop_req: 
-                        popcheck = True
-                        if relic_in >= relic_req:  #Note to self: Keep the pattern up if you decide to add more card thresholds.
-                            relcheck = True
-                        else:
-                            print("You don't have the required relics.") #Error messages
-                    else:
-                        print("You don't have the required population.")
-                        
+                elif power_in >= power_req:
+                    powcheck = True
                 else:
-                    print("You dont have the required power.")
+                    print("You dont have enough power points.")
+                    
+                if pop_in < 0 and pop_req == 0:
+                    popcheck = True
+                elif pop_in >= pop_req:
+                    popcheck = True
+                else:
+                    print("You dont have enough population.")
+                
+                if relic_in < 0 and relic_req == 0:
+                    relcheck = True
+                elif relic_in >= relic_req:
+                    relcheck = True
+                else:
+                    print("You dont have enough population.")
             else:
                 print("You dont have the required action points.")
         else:
@@ -159,10 +167,14 @@ class Menu():
         print("██                                 ██")
         print("██   3. (Hold a card)              ██")
         print("██                                 ██")
-        print("██   4. (Back)                     ██")
+        print("██   4. (Use Monsters/Heroes)      ██")
+        print("██                                 ██")
+        print("██   5. (Open Shop)                ██")
+        print("██                                 ██")
+        print("██   6. (Back)                     ██")
         print("██                                 ██")
         print("█████████████████████████████████████")
-    
+
     def Ponderstatus(self,action):
         success = False
         if action >= 2:
@@ -199,7 +211,7 @@ class Menu():
     
     def Hold(self,action,inhand_card,held_cards):
         success = False
-        if action >= 2 and len(held_cards) == 0:
+        if action >= 1 and len(held_cards) == 0:
             if inhand_card not in held_cards:
                 Menu.ShowCards(self,inhand_card)
                 intent = int(input("What card do you want to hold? (Enter Id): "))
@@ -227,6 +239,78 @@ class Menu():
             print("██                actions              ██")
             print("█████████████████████████████████████████")
             return success
+    
+    def Siege(self,Pop,APower,AHero,AMonster,ASacred):
+        Command = True
+        while Command == True:
+            print("█████████████████████████████████████")
+            print("██             <Command>           ██")
+            print("██   1. (Use Monsters)             ██")
+            print("██                                 ██")
+            print("██   2. (Use Heroes)               ██")
+            print("██                                 ██")
+            print("██   3. (Back)                     ██")
+            print("██                                 ██")
+            print("█████████████████████████████████████")
+            Choice = Menu.ReturnOption(self) 
+            if Choice == '1':
+                print("█████████████████████████████████████")
+                print("██             <Monsters>          ██")
+                print("██   1. (Absorb monster)           ██")
+                print("██                                 ██")
+                print("██   2. (Command to battle)        ██")
+                print("██                                 ██")
+                print("██   3. (Make creature sacred)     ██")
+                print("██                                 ██")
+                print("██   4. (Back)                     ██")
+                print("██                                 ██")
+                print("█████████████████████████████████████")
+                Choice = Menu.ReturnOption(self)
+                if Choice == '1':
+                    if AMonster >= 1:
+                        Command = False
+                        print("You absorb a monster",end="") #-1 Mon, +2 Pow
+                        event = randint(1,2)
+                        if event == 1:
+                            return 102 #+Surge for two turns / -1 Monster
+                        if event == 2:
+                            print(".")
+                            return 101 #Nothing more happens
+                    else:
+                        print("Not enough monsters to absorb.")
+                if Choice == '2':
+                    if AMonster >= 1:
+                        print("You send a monster to plunder a village")
+                        event = randint(1,3)
+                        if event == 1:
+                            print("You gain +2 relics!")
+                            return 111
+                        if event == 2:
+                            print("You gained 250 followers!")
+                            return 112
+                        if event == 3:
+                            print("You raid your opponents settlement and gain a bit of power!")
+                            return 113    
+                    else:
+                        print("Not enough monsters to absorb.")
+                if Choice == '3':
+                    if AMonster >= 1:
+                        if ASacred == True:
+                            print("You decide to crown one creature as your sacred creature.")
+                            print("This will remove them from your monsters but you will gain more resources per turn.")
+                                                                   
+                    
+                        
+            if Choice == '2':
+                print("wip")
+            if Choice == '3':
+                Command = False
+                return 301
+
+
+    def Points(self,Pop,Power,Monster,Hero,Relic,Realm):
+        Points = ((Pop * 1.5) + (Power * 100) + (Monster * 150) + (Hero * 150) + (Relic * 150) + (Realm * 2000) + 100)
+        return Points
             
                 
 def Card1():

@@ -10,7 +10,7 @@ P2_Hand = []
 P2_Hold = []
 #---------------------- ^^ The lists for cards and such aswell as the imports.
 
-P1Pop = 4000
+P1Pop = 400
 P1Power = 3
 P1Monster = 1
 P1Hero = 2
@@ -27,8 +27,9 @@ P1Extradmg = 0
 P1ActionDull = False
 P1ActionSurge = False
 P1SurgeTime = 0
+P1SacredMon = False
 #------------------------ ^^The values for P1
-P2Pop = 4000
+P2Pop = 400
 P2Power = 3
 P2Monster = 3  
 P2Hero = 1
@@ -45,6 +46,7 @@ P2Extradmg = 0
 P2ActionDull = False
 P2ActionSurge = False
 P2SurgeTime = 0
+P2SacredMon = False
 #----------------------- ^^The values for P2
 TurnsMade = 1
 #-----------------------^^ Universal values
@@ -79,12 +81,13 @@ while GameRun == True:
         P1Action = 6
         if P1ActionSurge == True:
             P1Action = ActionSurge(P1Action,2)
-            P1SurgeTime =- 1
+            P1SurgeTime -= 1
             if P1SurgeTime == 0:
+                P1ActionSurge = False
                 print("You no longer are action surged.")
         if P1ActionDull == True:
             P1Action = ActionSabotage(P1Action,2)
-            P1DullTime =- 1
+            P1DullTime -= 1
             if P1DullTime == 0:
                 P1ActionDull = False
                 print("Your action points are no longer hindered.")
@@ -360,6 +363,7 @@ while GameRun == True:
                     if event2 == 4:
                         P1ActionSurge = True
                         P1SurgeTime = 2
+                        P1Action += 2
                         print("and you feel a sudden surge of energy! (+2 action points for 2 turns)")
                     if event2 == 5:
                         P1Action += 3
@@ -418,6 +422,30 @@ while GameRun == True:
                 if P1Menu.Hold(P1Action,P1_Hand,P1_Hold):
                     print("Holding card",P1_Hold[0])
                     P1Action -= 1
+            
+            if P1Choice == '4':
+                P1Sieges = P1Menu.Siege(P1Pop,P1Power,P1Hero,P1Monster,P1SacredMon)
+                if P1Sieges == 101 or P1Sieges == 102: #These are seperate id numbers that are based of choice.
+                    P1Monster -= 1
+                    P1Power += 2
+                    if P1Sieges == 102:
+                        print(" alongside the absorbtion; you feel a sudden surge of power")
+                        P1SurgeTime = 2
+                        P1Action += 2
+                        P1ActionSurge = True
+                
+                if P1Sieges == 111:
+                    P1Relic += 2
+                if P1Sieges == 112:
+                    P1Pop += 250
+                if P1Sieges == 113:
+                    P2Pop -= Lethality(P2Pop,Lethality,P1Extradmg,200)
+                    P1Power += 1
+                
+                
+                
+                
+                    
 
         if P1Choice == "3":
             P1Turn = False
@@ -429,3 +457,17 @@ while GameRun == True:
         P2Turn = False
         P1Turn = True
         TurnsMade += 1
+    
+    if TurnsMade == MaxTurn:
+        print("Final turn!")
+ 
+    if MaxTurn+1 == TurnsMade:
+        GameRun = False
+        P1Points = 0
+        P2Points = 0
+        
+        print("---------------------------------------------------")
+        print("Player 1:",P1Menu.Points(P1Pop,P1Power,P1Monster,P1Hero,P1Relic,P1Realm),"points")
+        print("---------------------------------------------------")
+        print("")
+        print("---------------------------------------------------")
